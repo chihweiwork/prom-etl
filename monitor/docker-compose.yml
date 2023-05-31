@@ -1,0 +1,89 @@
+version: "3"
+
+networks:
+  prom:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.29.0.0/16
+          gateway: 172.29.0.1
+
+services:
+  worker-node-01:
+    image: centos-ssh:node-exporter.1.0.0
+    container_name: worker-node-01
+    hostname: cwn01
+    tty: true
+    privileged: true
+    networks:
+      prom:
+        ipv4_address: 172.29.1.1
+    ports:
+      - 60501:22
+      - 9101:9100
+    environment:
+      - LANG=en_US.UTF-8
+    volumes:
+      - /Users/chihwei/playground/prom-etl/monitor/volumn:/opt/exec-shell:ro
+    #command: "/bin/bash"
+    command: "/opt/exec-shell/exec-node-exporter.sh"
+
+  worker-node-02:
+    image: centos-ssh:node-exporter.1.0.0
+    container_name: worker-node-02
+    hostname: cwn02
+    tty: true
+    privileged: true
+    networks:
+      prom:
+        ipv4_address: 172.29.1.2
+    ports:
+      - 60502:22
+      - 9102:9100
+    environment:
+      - LANG=en_US.UTF-8
+    volumes:
+      - /Users/chihwei/playground/prom-etl/monitor/volumn:/opt/exec-shell:ro
+    #command: "/bin/bash"
+    command: "/opt/exec-shell/exec-node-exporter.sh"
+
+  worker-node-03:
+    image: centos-ssh:node-exporter.1.0.0
+    container_name: worker-node-03
+    hostname: cwn03
+    tty: true
+    privileged: true
+    networks:
+      prom:
+        ipv4_address: 172.29.1.3
+    ports:
+      - 60503:22
+      - 9103:9100
+    environment:
+      - LANG=en_US.UTF-8
+    volumes:
+      - /Users/chihwei/playground/prom-etl/monitor/volumn:/opt/exec-shell:ro
+    #command: "/bin/bash"
+    command: "/opt/exec-shell/exec-node-exporter.sh"
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: always
+    volumes:
+      #- /Users/chihwei/playground/prom-etl/monitor/localtime:/etc/localtime:ro
+      - /Users/chihwei/playground/prom-etl/monitor/prometheus/:/etc/prometheus/
+      - /Users/chihwei/playground/prom-etl/monitor/data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      prom:
+        ipv4_address: 172.29.2.1
+    expose:
+      - '9090'
+    ports:
+      - 9090:9090

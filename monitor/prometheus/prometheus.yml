@@ -1,0 +1,34 @@
+# global config
+global:
+
+  # 拉取目標的默認時間間隔
+  # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  scrape_interval:     3s 
+
+  # 執行規則的時間間隔
+  # Evaluate rules every 3 seconds. The default is every 1 minute.
+  evaluation_interval: 3s 
+
+  # scrape_timeout is set to the global default (10s)拉取一個目標原子的時間.
+  # external_labels：額外的屬性，會添加到拉取的數據並存到數據庫中
+
+# Alertmanager configuration 
+#alerting:
+#  alertmanagers:
+#  - static_configs:
+#    - targets: ['alertmanager:9093']
+
+# 根據alert.yml 的規則，並依造evaluation_interval的時間做拉取
+#rule_files:
+#  - "alert.yml"
+
+# 抓取資料的目標
+scrape_configs:
+  # 任務名稱
+  - job_name: 'worknode'
+    scrape_interval: 3s
+    static_configs:
+      - targets: 
+        - 172.29.1.1:9100
+        - 172.29.1.2:9100
+        - 172.29.1.3:9100
