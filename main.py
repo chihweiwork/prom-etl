@@ -62,7 +62,7 @@ def main(output):
     (
         spdf.write.option("header", True)
             .partitionBy("metric","date")
-            .mode("overwrite")
+            .mode("append")
             .csv(output)
     )
 
