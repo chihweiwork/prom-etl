@@ -22,6 +22,12 @@ clean-prom: ## remove prometheus data
 
 get-requirements: ## get python requirement
 	@source ./venv/bin/activate; pip freeze > ./requirements.txt
+run: ## run prometheus ETL process, use: make run PROMTOOL=PATH/TO/PROMTOOL STIME=START/TIME ETIME=END/TIME PROMEDATA=PATH/TO/PROM/DATA  OUTPUT=PATH/TO/OUTPUT/FORDER
+	@source ./venv/bin/activate
+	@$(PROMTOOL) tsdb dump \
+             --min-time=$(STIME)000 \
+             --max-time=$(ETIME)000 \
+             $(PROMEDATA) | python3 main.py --output $(OUTPUT)
 
 all: venv install ## install this project
 clean: clean-venv clean-build clean-env clean-prom ## clean all
